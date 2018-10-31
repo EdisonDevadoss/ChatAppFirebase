@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { GiftedChat } from "react-native-gifted-chat";
-import Backend from "../Backend";
+import FireStoreDetail from "../fireStore";
 
 class Chat extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ class Chat extends React.Component {
   }
   componentWillMount() {}
   componentDidMount() {
-    Backend.loadMessages(message => {
+    FireStoreDetail.loadMessages(message => {
       this.setState(previousState => {
         return {
           messages: GiftedChat.append(previousState.messages, message)
@@ -20,19 +20,19 @@ class Chat extends React.Component {
       });
     });
   }
-  componentWillUnmount() {
-    Backend.closeChat();
-  }
+  // componentWillUnmount() {
+  //   Backend.closeChat();
+  // }
   render() {
     return (
       <GiftedChat
         messages={this.state.messages}
         onSend={message => {
           console.log("messags", message);
-          Backend.sendMessage(message);
+          FireStoreDetail.sendMessage(message);
         }}
         user={{
-          _id: Backend.getUid(),
+          _id: FireStoreDetail.getUid(),
           name: this.props.name
         }}
       />
