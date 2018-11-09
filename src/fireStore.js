@@ -31,28 +31,30 @@ class FireStoreDetail {
     let newValue = [];
     this.db
       .collection("messages")
-      .orderBy("createdAt")
+      .where("reciverId", "==", "r4")
+      .where("senderId", "==", this.uid)
       .onSnapshot(value => {
-        datas = value.docs;
+        let datas = value.docs;
         datas.forEach(data => {
-          let isValue = newValue.some(val => val._id === data.id);
+          console.log("data is", data);
+          let isValue = newValue.some(
+            (val, i) => val._id === data._data.reciverId
+          );
           if (!isValue) {
             newValue.push({
               _id: data.id,
               text: data._data.text,
-              createdAt: new Date(data._data.createdAt),
+              createdAt: data._data.createdAt,
               user: {
-                _id: data._data.user._id,
-                name: data._data.user.name
+                _id: data._data.senderId
               }
             });
             callback({
               _id: data.id,
               text: data._data.text,
-              createdAt: new Date(data._data.createdAt),
+              createdAt: data._data.createdAt,
               user: {
-                _id: data._data.user._id,
-                name: data._data.user.name
+                _id: data._data.senderId
               }
             });
           }
@@ -62,10 +64,17 @@ class FireStoreDetail {
 
   sendMessage(message) {
     for (let i = 0; i < message.length; i++) {
-      this.db.collection("messages").add({
+      console.log("message", message);
+      let data = {};
+      data = {
+        senderId: this.uid,
         text: message[i].text,
-        user: message[i].user,
+        reciverId: "r4",
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      this.db.collection("messages").add({
+        ...data
       });
     }
   }

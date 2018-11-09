@@ -13,6 +13,7 @@ class Chat extends React.Component {
   componentWillMount() {}
   componentDidMount() {
     FireStoreDetail.loadMessages(message => {
+      console.log("message is", message);
       this.setState(previousState => {
         return {
           messages: GiftedChat.append(previousState.messages, message)
@@ -24,6 +25,8 @@ class Chat extends React.Component {
   //   Backend.closeChat();
   // }
   render() {
+    console.log("render called", this.state.messages);
+
     return (
       <GiftedChat
         messages={this.state.messages}
